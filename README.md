@@ -10,4 +10,4 @@ https://edwardyang12.github.io/Lab5-1/
 
 ## Part 2:
 
-https://github.com/e3brooks/github-actions-for-ci
+https://github.com/edwardyang12/github-actions-for-ci/issues/7
