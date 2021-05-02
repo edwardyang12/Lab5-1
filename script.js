@@ -8,9 +8,11 @@ const canvas = document.getElementById('user-image');
 const context = canvas.getContext('2d');
 const reset = document.querySelector('button[type=reset]');
 const voiceSelect = document.getElementById('voice-selection');
+const newImage = document.getElementById('image-input');
+const submit = document.querySelector('button[type=submit]');
 
-voiceSelect.disabled=false;
 populateVoice();
+voiceSelect.disabled= false;
 speechSynthesis.onvoiceschanged = populateVoice;
 function populateVoice(){
   const voices = speechSynthesis.getVoices();
@@ -26,16 +28,46 @@ function populateVoice(){
 
 // Fires whenever the img object loads a new image (such as with img.src =)
 img.addEventListener('load', () => {
-  // TODO
+  context.clearRect(0 , 0, canvas.width, canvas.height);
 
-  // Some helpful tips:
-  // - Fill the whole Canvas with black first to add borders on non-square images, then draw on top
-  // - Clear the form when a new image is selected
-  // - If you draw the image to canvas here, it will update as soon as a new image is selected
+  submit.disabled = false;
+  reset.disabled = true;
+  readText.disabled = true;
+
+  context.fillStyle = 'black';
+  context.fillRect(0, 0, canvas.width, canvas.height);
+
+  const dimensions = getDimmensions(canvas.width, canvas.height, img.width, img.height);
+  context.drawImage(img, dimensions.startX, dimensions.startY, dimensions.width, dimensions.height);
+});
+
+newImage.addEventListener('change',() => {
+  const object = URL.createObjectURL(newImage.files[0]);
+  img.src = object;
+  img.alt = newImage.files[0].name;
+});
+
+memeGenerator.addEventListener('submit', (e) => {
+  e.preventDefault();
+
+  const context = canvas.getContext('2d');
+  const top = memeGenerator.elements[1].value;
+  const bottom = memeGenerator.elements[2].value;
+  
+  context.font = "30px Impact";
+  context.fillStyle = 'white';
+  context.textAlign = 'center';
+  context.fillText(top, canvas.width/2,50);
+  context.fillText(bottom, canvas.width/2, canvas.height-50);
+
+  submit.disabled = true;
+  reset.disabled = false;
+  readText.disabled = false;
 
 });
 
-readText.disabled=false;
+
+/* Button: Read Text */
 readText.addEventListener('click',() =>{
   const voices = speechSynthesis.getVoices();
   const top = memeGenerator.elements[1].value;
@@ -77,16 +109,14 @@ volumeBar.addEventListener('input',() =>{
 
 });
 
-/* Clear Button */
-reset.disabled = false;
+/* Button: Clear */
 reset.addEventListener('click', () => {
-  /* clear image/text */
-  document.getElementById('image-input').value = "";
-  document.getElementById('text-top').value = "";
-  document.getElementById('text-bottom').value = "";
-  /* toggle relevant buttons */
+  const context = canvas.getContext('2d');
+  context.clearRect(0,0,canvas.width,canvas.height);
+
   reset.disabled = true;
   readText.disabled = true;  
+  submit.disabled = false;
 });
 
 /**
